@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Chao mung qui vi den voi {{ $data }}</h1>
+    <h1>Chao mung qui vi den voi trang {{ $data }}</h1>
     <h2>{{ $id ==null ? 'Khong co id' : "ID: $id" }}</h2>
 </body>
 </html>
