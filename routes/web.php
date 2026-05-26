@@ -1,3 +1,5 @@
+
+
 <?php
 
 use App\Http\Controllers\Admin\BrandController;
@@ -19,9 +21,18 @@ Route::get('/demo3',[DemoController::class,'index3']);
 Route::get('/demo4/{id}',[DemoController::class,'index4']);
 Route::get('/demo5/{id?}',[DemoController::class,'index5']);
 Route::get('/demo6/{id?}',[DemoController::class,'index6']);
-Route::resource('admin/category', CategoryController::class);
-Route::resource('admin/brand', BrandController::class);
-Route::resource('admin/product', ProductController::class);
-Route::resource('admin/user', UserController::class);
-Route::resource('admin/post',PostController::class);
 
+//Sử dụng prefix để tối các Route thay vì chỉ khai báo Route đơn thuần.
+Route::prefix('admin')->group(function () {
+Route::resource('/category', CategoryController::class);
+Route::resource('/brand', BrandController::class);
+Route::resource('/product', ProductController::class);
+Route::resource('/user', UserController::class);
+Route::resource('/post',PostController::class);
+});
+route::get('admin/dashboard', function () {
+    return view('admin.dashboard');
+})->name('admin.home');
+//goi 2 action test de kiem tra ket qua co chuyen trang hay khong
+Route::get('/test1', [ProductController::class,'test1']);
+Route::get('/test2', [ProductController::class,'test2']);

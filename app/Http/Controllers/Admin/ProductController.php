@@ -10,6 +10,16 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    
+    public function test1()
+    {
+        return redirect()->route('admin.home');
+    }
+       public function test2()
+    {
+        return redirect('/admin/dashboard');
+    }
     public function index()
     {
         return 'Trang hiển thị các sản phẩm';
