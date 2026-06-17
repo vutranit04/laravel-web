@@ -23,12 +23,12 @@ Route::get('/demo5/{id?}',[DemoController::class,'index5']);
 Route::get('/demo6/{id?}',[DemoController::class,'index6']);
 
 //Sử dụng prefix để tối các Route thay vì chỉ khai báo Route đơn thuần.
-Route::prefix('admin')->group(function () {
-Route::resource('/category', CategoryController::class);
-Route::resource('/brand', BrandController::class);
-Route::resource('/product', ProductController::class);
-Route::resource('/user', UserController::class);
-Route::resource('/post',PostController::class);
+Route::prefix('admin')-> name('admin.')->group(function () {
+Route::resource('/categories', CategoryController::class);
+Route::resource('/brands', BrandController::class);
+Route::resource('/products', ProductController::class);
+Route::resource('/users', UserController::class);
+Route::resource('/posts',PostController::class);
 });
 route::get('admin/dashboard', function () {
     return view('admin.dashboard');
@@ -36,3 +36,4 @@ route::get('admin/dashboard', function () {
 //goi 2 action test de kiem tra ket qua co chuyen trang hay khong
 Route::get('/test1', [ProductController::class,'test1']);
 Route::get('/test2', [ProductController::class,'test2']);
+

@@ -18,8 +18,7 @@ return new class extends Migration
             $table->text('content');
             $table->string('image',200);
             $table->tinyInteger('status')->default(1);
-            $table->bigInteger('user_id');
-            $table->timestamps();
+            $table->timestamps();   
              //=============================================
             //khoa ngoai toi bang users
             $table->foreignId('userid')
