@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+class Post extends Model
+{
+
+    //chi dinh  ten bang gtrong database 
+    //(co the bo qua khai bai $table neu dat theo nguyen tac so nhieu  )
+    protected $table='posts';
+    //khong chi dinh khoa chinh vi primarykey cua bang nay la id
+    //cac cot cho phep them sua du lieu hang loat
+    //join bang user
+      public function user()
+{
+    return $this->belongsTo(User::class, 'userid', 'id');
+}
+    protected $fillable = [
+      'title',
+      'slug',
+      'content',
+      'image',
+      'status',
+      'userid',
+      'created_at',
+    ];
+
+}

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -11,26 +13,29 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $list = DB::table('posts')
-         ->join('users', 'posts.id', '=', 'users.id')
-        ->select(
-            'posts.id',
-            'posts.title',
-            'posts.slug',
-            'posts.content',
-            'posts.image',
-            'posts.status',
-            'posts.userid',
-            'posts.created_at',
-            'users.fullname'
-        )
-        ->where('posts.status', 1)
-        ->orderBy('posts.id', 'desc')
-        ->get();
+    public function index($limit=5)
+{
+        // $list = DB::table('posts')
+        //  ->join('users', 'posts.id', '=', 'users.id')
+        // ->select(
+        //     'posts.id',
+        //     'posts.title',
+        //     'posts.slug',
+        //     'posts.content',
+        //     'posts.image',
+        //     'posts.status',
+        //     'posts.userid',
+        //     'posts.created_at',
+        //     'users.fullname'
+        // )
+        // ->where('posts.status', 1)
+        // ->orderBy('posts.id', 'desc')
+        // ->get();
 
-    return view('admin.posts.index', compact('list'));
+     $list=Post::with('user')
+        ->orderBy('id','desc')
+        ->paginate($limit);
+        return view('admin.posts.index', compact('list'));
     }
 
     /**
@@ -38,7 +43,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return 'Tạo các bài viết mới';
+        //Lấy danh sách gồm id và họ tên của các users
+        $users = User::select('id', 'fullname')->get();
+        return view('admin.posts.create',compact('users'));
     }
 
     /**
@@ -46,7 +53,26 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+    //Xử lý phần hình ảnh của bài viết
+        $imagePath = null; // Mặc định nếu không chọn ảnh thì lưu null hoặc trống
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
+        // Tạo tên file duy nhất: ví dụ 1719730000_hinhanh.jpg
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        // Đẩy file vào thư mục public/uploads/posts
+        $file->move(public_path('uploads/posts'), $fileName);
+        // Đường dẫn chuẩn để lưu vào cơ sở dữ liệu
+        $imagePath = 'uploads/posts/' . $fileName;
+    }
+           Post::create([
+            'title'=>$request->title,
+            'slug'=>$request->slug,
+            'content'=>$request->input('content'),
+            'image'=>$imagePath,
+            'status'=>$request->status,
+            'userid'  => $request->userid,
+        ]);
     }
 
     /**

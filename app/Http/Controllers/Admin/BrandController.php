@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -11,14 +12,20 @@ class BrandController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($limit=5)
     {
-          $list= DB::table('brands')
-        ->select ('id','brandname','slug','image','status')
+        //   $list= DB::table('brands')
+        // ->select ('id','brandname','slug','image','status')
+        // ->where('status',1)
+        // ->orderBy('brandname')
+        // ->get();
+        // return view ('admin.brands.index',compact('list'));
+        //==================================================
+        $list=Brand::select('id','brandname','slug','image','status')
         ->where('status',1)
         ->orderBy('brandname')
-        ->get();
-        return view ('admin.brands.index',compact('list'));
+         ->paginate($limit);
+        return view('admin.brands.index',compact('list'));
     }
 
     /**
@@ -26,7 +33,7 @@ class BrandController extends Controller
      */
     public function create()
     {
-        return "Thêm thương hiệu mới";
+        return view('admin.brands.create');
     }
 
     /**
@@ -34,7 +41,12 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        //
+            Brand::create([
+            'brandname'=>$request->brandname,
+            'slug'=>$request->slug,
+            'image'=>$request->image,
+            'status'=>$request->status,
+        ]);
     }
 
     /**

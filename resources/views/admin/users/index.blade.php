@@ -4,13 +4,13 @@
 
 @section('content')
 <h2 class="mb-3">DANH SÁCH NGƯỜI DÙNG</h2>
-<a href="{{ route('admin.categories.create') }}" class="btn btn-success
+<a href="{{ route('admin.users.create') }}" class="btn btn-success
 mb-3">
 + Thêm mới
 </a>
 <table class="table table-bordered table-hover table-striped">
     <thead class="table-dark">
-        <tr>
+        <tr>    
             <th>ID</th>
             <th>Họ tên</th>
             <th>Hình ảnh</th>
@@ -23,6 +23,7 @@ mb-3">
             <th>Ngày sinh</th>
             <th>Vai trò</th>
             <th>Trạng thái</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
@@ -63,8 +64,30 @@ mb-3">
                         <span class="badge bg-secondary">Khóa</span>
                     @endif
                 </td>
+                <td>
+                      <a href="{{ route('admin.users.edit', $item->id) }}"
+                        class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    <form action="{{ route('admin.users.destroy', $item->id) }}"
+                        method="POST"
+                        style="display:inline-block"
+                        onsubmit="return confirm('Bạn có chắc muốn xóa?')">
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
             </tr>
         @endforeach
     </tbody>
 </table>
+<div class="d-flex justify-content-center">
+    {{ $list -> links()  }}
+
+</div>
 @endsection

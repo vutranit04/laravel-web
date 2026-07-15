@@ -4,7 +4,7 @@
 
 @section('content')
 <h2 class="mb-3">DANH SÁCH BÀI VIẾT</h2>
-<a href="{{ route('admin.categories.create') }}" class="btn btn-success
+<a href="{{ route('admin.posts.create') }}" class="btn btn-success
 mb-3">
 + Thêm mới
 </a>
@@ -19,6 +19,7 @@ mb-3">
             <th>Người đăng</th>
             <th>Trạng thái</th>
             <th>Ngày tạo</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
 
@@ -39,7 +40,7 @@ mb-3">
 
         
                  <td>
-                    {{ $item->fullname }}
+                    {{ $item->user->fullname }}
                 </td>
 
                 <td>
@@ -53,8 +54,30 @@ mb-3">
                 <td>
                     {{ $item->created_at }}
                 </td>
+                     <td>
+                    <a href="{{ route('admin.posts.edit', $item->id) }}"
+                        class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    <form action="{{ route('admin.posts.destroy', $item->id) }}"
+                        method="POST"
+                        style="display:inline-block"
+                        onsubmit="return confirm('Bạn có chắc muốn xóa?')">
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
             </tr>
         @endforeach
     </tbody>
 </table>
+<div class="d-flex justify-content-center">
+    {{ $list -> links()  }}
+
+</div>
 @endsection

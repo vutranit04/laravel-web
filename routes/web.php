@@ -26,7 +26,7 @@ Route::get('/demo6/{id?}',[DemoController::class,'index6']);
 Route::prefix('admin')-> name('admin.')->group(function () {
 Route::resource('/categories', CategoryController::class);
 Route::resource('/brands', BrandController::class);
-Route::resource('/products', ProductController::class);
+Route::resource('/products', ProductController::class);     
 Route::resource('/users', UserController::class);
 Route::resource('/posts',PostController::class);
 });

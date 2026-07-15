@@ -18,6 +18,7 @@ mb-3">
             <th>Tên loại</th>
             <th>Slug</th>
             <th>Trạng thái</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
@@ -33,7 +34,29 @@ mb-3">
                         <span class="badge bg-danger">Ẩn</span>
                     @endif
                 </td>
+                  <td>
+                    <a href="{{ route('admin.categories.edit', $item->cateid) }}"
+                        class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    <form action="{{ route('admin.categories.destroy', $item->cateid) }}"
+                        method="POST"
+                        style="display:inline-block"
+                        onsubmit="return confirm('Bạn có chắc muốn xóa?')">
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
         @endforeach
     </tbody>
 </table>
+<div class="d-flex justify-content-center">
+    {{ $list -> links()  }}
+
+</div>
 @endsection

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -11,14 +12,28 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($limit=10)
     {
-          $list= DB::table('users')
-        ->select ('id','fullname','username','email','password','phone','address','gender','birthday','role','status')
-        ->where('status',1)
+        //   $list= DB::table('users')
+        // ->select ('id','fullname','username','email','password','phone','address','gender','birthday','role','status')
+        // ->where('status',1)
+        // ->orderBy('username')
+        // ->get();
+        // return view ('admin.users.index',compact('list'));
+        $list=User::select('id',
+        'fullname','username',
+        'email',
+        'password',
+        'phone',
+        'address',
+        'gender',
+        'birthday',
+        'role',
+        'status')
+        ->where('status', 1)
         ->orderBy('username')
-        ->get();
-        return view ('admin.users.index',compact('list'));
+        ->paginate(5);
+        return view('admin.users.index', compact('list'));
     }
 
     /**
@@ -26,7 +41,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return 'Tạo người dùng mới';
+        return view('admin.users.create');
     }
 
     /**
@@ -34,7 +49,18 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         User::create([
+            'fullname'=>$request->fullname,
+            'username'=>$request->username,
+            'email'=>$request->email,
+            'password'=>$request->password,
+            'phone'=>$request->phone,
+            'address'=>$request->address,
+            'gender'=>$request->gender,
+            'birthday'=>$request->birthday,
+            'role'=>$request->role,
+            'status'=>$request->status,
+        ]);
     }
 
     /**
