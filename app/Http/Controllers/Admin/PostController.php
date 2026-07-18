@@ -52,7 +52,7 @@ class PostController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+    {    try{
 
     //Xử lý phần hình ảnh của bài viết
         $imagePath = null; // Mặc định nếu không chọn ảnh thì lưu null hoặc trống
@@ -65,6 +65,7 @@ class PostController extends Controller
         // Đường dẫn chuẩn để lưu vào cơ sở dữ liệu
         $imagePath = 'uploads/posts/' . $fileName;
     }
+
            Post::create([
             'title'=>$request->title,
             'slug'=>$request->slug,
@@ -73,6 +74,16 @@ class PostController extends Controller
             'status'=>$request->status,
             'userid'  => $request->userid,
         ]);
+        return redirect()
+        ->route('admin.posts.index')
+        ->with('success','Thêm bài viết thành công!');
+    }catch(\Exception $e)
+    {
+        return back()
+        ->withInput()
+        ->with('error', $e->getMessage());
+    }
+
     }
 
     /**
@@ -88,7 +99,9 @@ class PostController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $post=Post::find($id);
+        $users=User::select('id','fullname')->get();
+        return view('admin.posts.edit',compact('post','users'));
     }
 
     /**
@@ -96,7 +109,38 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        //Kiểm tra
+        try{
+            if(empty($request->userid))
+          {      return back()
+            ->withInput()
+            ->with('error','Vui lòng chọn tác giả!');}
+
+        $post=Post::find($id);
+            if(!$post)
+                {
+                    return redirect()
+                    ->route('admin.posts.index')
+                    ->with('error','Bài viết không tồn tại.');
+                }
+                //Thực hiện update
+                $post->update([
+                    'title'=>$request->title,
+                     'slug'=>$request->slug,
+                    'content'=>$request->input('content'),
+                    'status'=>$request->status,
+                    'userid'  => $request->userid,
+                ]);
+                return redirect()
+                ->route('admin.posts.index')
+                ->with('success','Sửa bài viết thành công!');
+
+        }catch(\Exception $e)
+        {
+            return back()
+            ->route('admin.posts.index')
+            ->with('error', $e->getMessage());
+        }
     }
 
     /**

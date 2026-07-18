@@ -48,6 +48,7 @@ class CategoryController extends Controller
         // ]);
         // return redirect()->route('admin.categories.index');
         //Eloquent ORM 
+        try{
         Category::create([
             'catename'=>$request->catename,
             'slug'=>$request->slug,
@@ -55,6 +56,16 @@ class CategoryController extends Controller
             'image'=>$request->image,
             'status'=>$request->status,
         ]);
+        return redirect()
+        ->route('admin.categories.index')
+        ->with('success','Thêm danh mục thành công!');
+        }catch(\Exception $e){
+            return back()
+            ->withInput()
+            ->with('error',$e->getMessage());
+            
+        }
+
     }
 
     /**
@@ -70,20 +81,45 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    { {
-            $data = 'Sua san pham';
-            dump($id);
-            return view('demoindex6', compact('data', 'id'));
-        }
+    public function edit(string $cateid)
+    { 
+        
+        $category=Category::find($cateid);
+        return view('admin.categories.edit',compact('category'));
+       
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $cateid)
     {
-        //
+        //Kiểm tra
+        try{
+           $category=Category::find($cateid);
+           if(!$category)
+            {
+                return redirect()
+                ->route('admin.categories.index')
+                ->with('error','Danh mục không tồn tại');
+            }
+            //thực hiện cập nhật
+            $category->update([
+            'catename'=>$request->catename,
+            'slug'=>$request->slug,
+            'description'=>$request->description,
+            'status'=>$request->status,
+            ]);
+            return redirect()
+            ->route('admin.categories.index')
+            ->with('success','Cập nhật danh mục thành công!');
+            
+        }catch(\Exception $e)
+        {
+            return back()
+            ->withInput()
+            ->with('error',$e->getMessage());
+        }
     }
 
     /**

@@ -8,13 +8,17 @@
 mb-3">
 + Thêm mới
 </a>
+@if(session('success'))
+<div class="alert alert-success">
+    {{ session('success') }}
+</div>
+@endif
 <table class="table table-bordered table-hover table-striped">
     <thead class="table-dark">
         <tr>    
             <th>ID</th>
             <th>Họ tên</th>
             <th>Hình ảnh</th>
-
             <th>Tài khoản</th>
             <th>Email</th>
             <th>SĐT</th>

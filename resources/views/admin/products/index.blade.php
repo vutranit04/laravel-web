@@ -4,10 +4,16 @@
 
 @section('content')
 <h2 class="mb-3">DANH SÁCH SẢN PHẨM</h2>
-<a href="{{ route('admin.categories.create') }}" class="btn btn-success
+<a href="{{ route('admin.products.create') }}" class="btn btn-success
 mb-3">
 + Thêm mới
 </a>
+@if(session('success'))
+<div class="alert alert-success">
+    {{ session('success') }}
+
+</div>
+@endif
 <table class="table table-bordered table-hover table-striped">
     <thead class="table-dark">
         <tr>
@@ -16,7 +22,6 @@ mb-3">
             <th>Loại</th>
             <th>Thương hiệu</th>
             <th>Giá</th>
-       
             <th>Trạng thái</th>
             <th width="120">Thao tác</th>
 
@@ -32,8 +37,8 @@ mb-3">
                 <td>{{ $item->productname }}</td>
 
                 <td>{{ $item->category?->catename }}</td>
+                
                 <td>{{ $item->brand?->brandname }}</td>
-
                 <td>{{ number_format($item->price,) }} đ</td>
                <td>
                     @if ($item->status)

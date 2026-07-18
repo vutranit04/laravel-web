@@ -12,6 +12,9 @@ class Post extends Model
     //khong chi dinh khoa chinh vi primarykey cua bang nay la id
     //cac cot cho phep them sua du lieu hang loat
     //join bang user
+    // Tham số 1: Model liên kết (User)
+        // Tham số 2: Tên cột khóa ngoại trong bảng posts ('userid')
+        // Tham số 3: Tên cột khóa chính trong bảng users ('id')
       public function user()
 {
     return $this->belongsTo(User::class, 'userid', 'id');

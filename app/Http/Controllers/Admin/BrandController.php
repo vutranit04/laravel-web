@@ -22,7 +22,6 @@ class BrandController extends Controller
         // return view ('admin.brands.index',compact('list'));
         //==================================================
         $list=Brand::select('id','brandname','slug','image','status')
-        ->where('status',1)
         ->orderBy('brandname')
          ->paginate($limit);
         return view('admin.brands.index',compact('list'));
@@ -40,13 +39,22 @@ class BrandController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+    { try{
             Brand::create([
             'brandname'=>$request->brandname,
             'slug'=>$request->slug,
             'image'=>$request->image,
             'status'=>$request->status,
         ]);
+        return redirect()
+        ->route('admin.brands.index')
+        ->with('success','Thêm thương hiệu thành công!');
+        }catch(\Exception $e)
+        {
+             return back()
+            ->withInput()
+            ->with('error',$e->getMessage());
+        }
     }
 
     /**
@@ -64,15 +72,39 @@ class BrandController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $brand=Brand::find($id);
+        return view('admin.brands.edit',compact('brand'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        //
+    { 
+        try{
+
+        
+        $brand=Brand::find($id);
+        if(!$brand){
+            return redirect()
+            ->route('admin.brands.index')
+            ->with('error','Thương hiệu không tồn tại');
+        }
+        $brand->update([
+            'brandname'=>$request->brandname,
+             'slug'=>$request->slug,
+            'status'=>$request->status,
+        ]);
+        return redirect()
+        ->route('admin.brands.index')
+        ->with('success','Cập nhật thương hiệu thành công');
+
+        }catch(\Exception $e)
+        {
+            return back()
+            ->withInput()
+            ->with('error',$e->getMessage());
+        }
     }
 
     /**

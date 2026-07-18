@@ -9,7 +9,6 @@ class Product extends Model
     protected $table='products';
     protected $primaryKey='id';
     protected $fillable=[
-            'id',
             'productname',
             'slug',
             'price',
@@ -17,6 +16,8 @@ class Product extends Model
             'image',
             'description',
             'status',
+            'cateid',
+            'brandid',
 
     ];
     //Cấu hình quan hệ với Category

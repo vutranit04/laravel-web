@@ -10,7 +10,13 @@
 mb-3">
 + Thêm mới
 </a>
+@if(session('error'))
+<div class="alert alert-danger">
+    {{ session('error') }}
 
+</div>
+
+@endif
 <table class="table table-bordered table-hover table-striped">
     <thead class="table-dark">
         <tr>
