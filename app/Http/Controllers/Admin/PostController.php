@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\PostRequest;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -51,7 +52,7 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {    try{
 
     //Xử lý phần hình ảnh của bài viết
@@ -107,7 +108,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(PostRequest $request, string $id)
     {
         //Kiểm tra
         try{

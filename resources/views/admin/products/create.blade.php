@@ -10,25 +10,31 @@
 @section('content')
     <div class="border rounded bg-white p-4 shadow-sm">
         <h3 class="mb-4">Thêm sản phẩm</h3>
-        {{-- Hiển thị lỗi từ sesion flash --}}
-        @if(session ('error'))
-        <div class=" alert alert-danger">
-            {{ session ('error') }}
-        </div>
-        @endif
-        <form action="{{ route('admin.products.store') }}" method="POST">
+       <x-admin.alert/>
+
+        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="form-label">Tên sản phẩm</label>
-                        <input type="text" name="productname" class="form-control" value="{{ old('productname') }}"
-                                    required>
+                        <input type="text" name="productname" class="form-control" value="{{ old('productname') }}" required>
+                             @error('productname')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Slug</label>
                         <input type="text" name="slug" class="form-control" value="{{ old('slug') }}"
-                         required>
+                         required>     @error('slug')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Loại sản phẩm</label>
@@ -39,8 +45,15 @@
                                     {{ old('cateid')== $category->cateid ? 'selected' :''}}>
                                     {{ $category->catename }}
                                 </option>
+                                  
                             @endforeach
                         </select>
+                           @error('cateid')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Thương hiệu</label>
@@ -52,19 +65,48 @@
 
                                     {{ $brand->brandname }}
                                 </option>
+                      
                             @endforeach
                         </select>
+                           @error('brandid')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="form-label">Giá</label>
                         <input type="number" name="price" class="form-control" value="{{ old('price') }}"
-                         required>
+                         required>     @error('price')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Giá khuyến mãi</label>
-                        <input type="number" name="pricediscount" class="form-control" value="{{ old('pricediscount',0) }}">
+                        <input type="number" name="pricediscount" class="form-control" value="{{ old('pricediscount',0) }}">     @error('pricediscount')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Hình ảnh</label>
+                        <input type="file" name="image" id="image" class="form-control" accept="image/*" onchange="previewImage(event)">
+                        @error('image')
+                        <span class="text-danger">
+                            {{ $message }}
+                        </span>
+                        @enderror
+                        <div class="mt-2">
+                            <img id="preview" src="#" alt="Xem trước hình ảnh" class="img-thumbnail d-none" style="max-height: 200px;">
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label d-block">Trạng thái</label>
@@ -76,6 +118,12 @@
                         <label class="btn btn-outline-danger" for="inactive">
                             Ẩn
                         </label>
+                         @error('status')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Mô tả sản phẩm</label>

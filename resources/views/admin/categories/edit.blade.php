@@ -7,11 +7,8 @@
     <h1 class="mb-4 text-uppercase">
         Sửa danh mục
     </h1>
-  @if(session ('error'))
-        <div class=" alert alert-danger">
-            {{ session ('error') }}
-        </div>
-        @endif
+           <x-admin.alert/>
+
     <div class="card">
         <div class="card-body">
 
@@ -24,6 +21,12 @@
                            name="catename"
                            value="{{ old('catename', $category->catename) }}"
                            class="form-control" required>
+                                 @error('catename')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                 </div>
 
                 <div class="mb-3">
@@ -32,6 +35,12 @@
                            name="slug"
                            value="{{ old('slug',$category->slug) }}"
                            class="form-control" required>
+                                 @error('slug')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                 </div>
 
                 <div class="mb-3">
@@ -51,11 +60,20 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Trạng thái</label>
-                    <select name="status" class="form-select">
-                        <option value="1" {{ old('status', $category->status) == 1 ? 'selected' : '' }}>Hiển thị</option>
-                        <option value="0" {{ old('status', $category->status) == 0 ? 'selected' : '' }}>Ẩn</option>
-                    </select>
+                      <label class="form-label">Trạng thái</label>
+                        <input type="radio" class="btn-check" name="status" id="active" 
+                        value="1" {{ old('status', 1) == 1 ? 'checked' : '' }}>
+                        <label class="btn btn-outline-success"  for="active">Hiển thị</label>
+                          
+                        <input type="radio" class="btn-check" name="status" id="inactive" 
+                        value="0" {{ old('status', 1) == 0 ? 'checked' : '' }}>
+                        <label class="btn btn-outline-danger"  for="inactive">Ẩn</label>
+                            @error('status')
+                        <span class="text-danger">
+                            {{ $message }}
+                        </span>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="mt-4">

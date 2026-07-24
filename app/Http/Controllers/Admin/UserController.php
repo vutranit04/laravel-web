@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,26 +14,24 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($limit=10)
+    public function index($limit = 10)
     {
-        //   $list= DB::table('users')
-        // ->select ('id','fullname','username','email','password','phone','address','gender','birthday','role','status')
-        // ->where('status',1)
-        // ->orderBy('username')
-        // ->get();
-        // return view ('admin.users.index',compact('list'));
-        $list=User::select('id',
-        'fullname','username',
-        'email',
-        'password',
-        'phone',
-        'address',
-        'gender',
-        'birthday',
-        'role',
-        'status')
-        ->orderBy('username')
-        ->paginate($limit);
+        $list = User::select(
+            'id',
+            'fullname',
+            'username',
+            'email',
+            'password',
+            'phone',
+            'address',
+            'gender',
+            'birthday',
+            'role',
+            'status'
+        )
+            ->orderBy('username')
+            ->paginate($limit);
+
         return view('admin.users.index', compact('list'));
     }
 
@@ -47,29 +46,21 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    { try{
-         User::create([
-            'fullname'=>$request->fullname,
-            'username'=>$request->username,
-            'email'=>$request->email,
-            'password'=>$request->password,
-            'phone'=>$request->phone,
-            'address'=>$request->address,
-            'gender'=>$request->gender,
-            'birthday'=>$request->birthday,
-            'role'=>$request->role,
-            'status'=>$request->status,
-        ]);
-        return redirect()
-        ->route('admin.users.index')
-        ->with('success','Thêm người dùng thành công!!');
-    }catch(\Exception $e)
+    public function store(UserRequest $request)
     {
-        return back()
-        ->withInput()
-        ->with('error', $e->getMessage());
-    }
+        try {
+            $data = $request->validated();
+
+            User::create($data);
+
+            return redirect()
+                ->route('admin.users.index')
+                ->with('success', 'Thêm người dùng thành công!!');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -85,43 +76,41 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        $user=User::find($id);
-        return view('admin.users.edit',compact('user'));
+        $user = User::find($id);
+        return view('admin.users.edit', compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserRequest $request, string $id)
     {
-        try{
+        try {
             $user = User::find($id);
-            if(!$user)
+            if (!$user) {
                 return back()
-            ->withInput()
-            ->with('error','Người dùng không tồn tại');
-            //Cập nhật
-        $user->update([
-             'fullname'=>$request->fullname,
-            'username'=>$request->username,
-            'email'=>$request->email,
-            'password'=>$request->password,
-            'phone'=>$request->phone,
-            'address'=>$request->address,
-            'gender'=>$request->gender,
-            'birthday'=>$request->birthday,
-            'role'=>$request->role,
-            'status'=>$request->status,
-        ]);
-        return redirect()
-        ->route('admin.users.index')
-        ->with('success','Sửa thông tin người dùng thành công!');
-        
-        }catch(\Exception $e)
-        {
+                    ->withInput()
+                    ->with('error', 'Người dùng không tồn tại');
+            }
+
+            // Lấy dữ liệu đã validate
+            $data = $request->validated();
+
+            // Nếu không nhập password mới thì bỏ qua, giữ password cũ
+            if (empty($data['password'])) {
+                unset($data['password']);
+            }
+
+            // Cập nhật
+            $user->update($data);
+
+            return redirect()
+                ->route('admin.users.index')
+                ->with('success', 'Sửa thông tin người dùng thành công!');
+        } catch (\Exception $e) {
             return back()
-            ->withInput()
-            ->with('error', $e->getMessage());
+                ->withInput()
+                ->with('error', $e->getMessage());
         }
     }
 

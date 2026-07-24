@@ -7,11 +7,8 @@
         <h1 class="mb-4 text-uppercase">
             Thêm bài viết mới
         </h1>
-  @if(session ('error'))
-        <div class=" alert alert-danger">
-            {{ session ('error') }}
-        </div>
-        @endif
+      <x-admin.alert/>
+
         <div class="card">
             <div class="card-body">
 
@@ -24,6 +21,12 @@
                             name="title"
                             value="{{ old('title') }}"
                             class="form-control" required>
+                                 @error('title')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
@@ -32,6 +35,12 @@
                             name="slug"
                             value="{{ old('slug') }}"
                             class="form-control" required>
+                                 @error('slug')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
@@ -39,7 +48,14 @@
                         <textarea name="content" 
                                 class="form-control" 
                                 rows="6" 
-                                placeholder="Nhập nội dung chi tiết của bài viết..." required>{{ old('content') }}</textarea>
+                                placeholder="Nhập nội dung chi tiết của bài viết..." required>{{ old('content') }}
+                            </textarea>
+                                 @error('content')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
@@ -48,6 +64,12 @@
                             name="image" 
                             class="form-control" 
                             accept="image/*">
+                                 @error('image')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Chọn tác giả (User)</label>
@@ -57,14 +79,28 @@
                                 <option value="{{ $user->id }}" >{{ $user->fullname }}</option>
                             @endforeach
                         </select>
+                             @error('userid')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
 
-                    <div class="mb-3">
+                   <div class="mb-3">
                         <label class="form-label">Trạng thái</label>
-                        <select name="status" class="form-select">
-                            <option value="1" selected>Hiển thị</option>
-                            <option value="0">Ẩn</option>
-                        </select>
+                        <input type="radio" class="btn-check" name="status" id="active" 
+                        value="1" {{ old('status', 1) == 1 ? 'checked' : '' }}>
+                        <label class="btn btn-outline-success"  for="active">Hiển thị</label>
+                          
+                        <input type="radio" class="btn-check" name="status" id="inactive" 
+                        value="0" {{ old('status', 1) == 0 ? 'checked' : '' }}>
+                        <label class="btn btn-outline-danger"  for="inactive">Ẩn</label>
+                            @error('status')
+                        <span class="text-danger">
+                            {{ $message }}
+                        </span>
+                        @enderror
                     </div>
 
                     <div class="mt-4">

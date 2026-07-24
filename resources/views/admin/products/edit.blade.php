@@ -10,12 +10,8 @@
 @section('content')
     <div class="border rounded bg-white p-4 shadow-sm">
         <h3 class="mb-4">Sửa sản phẩm</h3>
-        {{-- Hiển thị lỗi từ sesion flash --}}
-        @if(session ('error'))
-        <div class=" alert alert-danger">
-            {{ session ('error') }}
-        </div>
-        @endif
+         <x-admin.alert/>
+
         <form action="{{ route('admin.products.update', $product->id) }}" method="POST">
             @csrf
             @method('PUT')
@@ -25,11 +21,23 @@
                         <label class="form-label">Tên sản phẩm</label>
                         <input type="text" name="productname" class="form-control" value="{{ old('productname',$product->productname) }}"
                                     required>
+                                      @error('productname')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Slug</label>
                         <input type="text" name="slug" class="form-control" value="{{ old('slug',$product->slug)}}"
                          required>
+                           @error('slug')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Loại sản phẩm</label>
@@ -41,6 +49,12 @@
                                 </option>
                             @endforeach
                         </select>
+                          @error('cateid')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Thương hiệu</label>
@@ -53,6 +67,12 @@
                                 </option>
                             @endforeach
                         </select>
+                          @error('brandid')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -60,10 +80,22 @@
                         <label class="form-label">Giá</label>
                         <input type="number" name="price" class="form-control" value="{{ old('price',$product->price) }}"
                          required>
+                           @error('price')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Giá khuyến mãi</label>
                         <input type="number" name="pricediscount" class="form-control" value="{{ old('pricediscount',0) }}">
+                          @error('pricediscount')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label d-block">Trạng thái</label>
@@ -75,6 +107,12 @@
                         <label class="btn btn-outline-danger" for="inactive">
                             Ẩn
                         </label>
+                             @error('status')
+                        <span class="text-danger">
+                            {{ $message }}
+
+                        </span>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Mô tả sản phẩm</label>

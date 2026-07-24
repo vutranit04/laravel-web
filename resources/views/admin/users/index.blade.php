@@ -44,20 +44,20 @@ mb-3">
                 <td>
                     @if($item->gender == 1)
                         Nam
-                    @elseif($item->gender == 0)
+                    @elseif($item->gender == 2)
                         Nữ
                     @else
-                        Khác
+                        Không cung cấp
                     @endif
                 </td>
 
                 <td>{{ $item->birthday }}</td>
 
                 <td>
-                    @if($item->role == 'admin')
-                        <span class="badge bg-danger">Admin</span>
-                    @else
-                        <span class="badge bg-primary">User</span>
+                    @if($item->role == 1)
+                        <span class="badge bg-danger">Quản lý</span>
+                    @elseif($item->role == 2)
+                        <span class="badge bg-primary">Nhân viên</span>
                     @endif
                 </td>
 
