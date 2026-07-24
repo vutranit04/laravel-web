@@ -24,7 +24,7 @@ class ProductRequest extends FormRequest
     //Khai báo các quy tắc Validation dùng chung cho chức năng thêm mới và cập nhật sản phẩm:
     public function rules(): array
     {
-     // lấy model Product từ tham số product từ URL hiện tại (Resource Route)
+        // lấy model Product từ tham số product từ URL hiện tại (Resource Route)
         $product = $this->route('product');
         return [
             'productname' => [
@@ -40,41 +40,52 @@ class ProductRequest extends FormRequest
                 Rule::unique('products', 'slug')->ignore($product),
                 'regex:/^[a-z0-9-]+$/',
             ],
-      
-            'price'=>[
+
+            'price' => [
                 'required',
                 'numeric',
                 'min:0',
             ],
-            'pricediscount'=>[
-              'nullable',
-                'numeric',
-                'min:0',
-                'lte:price',//nho hon hoac bang
-            ],
-            'image' => [
-                $this->isMethod('post') ? 'required' : 'nullable',
+            'img' => [
+                'required',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:2048',
+                'max:200',
+            ],
+            // mảng
+            'imgs' => [
+                'nullable',
+                'array',
+            ],
+            // từng phần tử trong file
+            'imgs.*' => [
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:200',
+            ],
+            'pricediscount' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                'lte:price', //nho hon hoac bang
             ],
             'description' => [
                 'nullable',
                 'string',
             ],
             'status' => 'required|in:0,1',
-                   'cateid'=>[
+            'cateid' => [
                 'required',
                 'exists:categories,cateid',
 
             ],
-            'brandid'=>[
+            'brandid' => [
                 'required',
                 'exists:brands,id',
             ],
         ];
     }
-    public function messages():array
+    public function messages(): array
     {
         return [
             'required' => ':attribute không được để trống.',
@@ -91,9 +102,13 @@ class ProductRequest extends FormRequest
             'status.in' => ':attribute không hợp lệ.',
             'cateid.exists' => ':attribute không tồn tại.',
             'brandid.exists' => ':attribute không tồn tại.',
+            'img' => ':attribute phải là hình ảnh.',
+            'mimes' => ':attribute chỉ chấp nhận các định dạng: jpg, jpeg, png, webp.',
+            'img.max' => ':attribute không được vượt quá 200 KB.',
+            'imgs.*.max' => ':attribute không được vượt quá 200 KB.',
         ];
     }
-    public function attributes():array
+    public function attributes(): array
     {
         return [
             'productname' => 'Tên sản phẩm',
@@ -105,6 +120,7 @@ class ProductRequest extends FormRequest
             'status' => 'Trạng thái',
             'cateid' => 'Danh mục',
             'brandid' => 'Thương hiệu',
+            'img' => 'Hình ảnh',
         ];
     }
 }

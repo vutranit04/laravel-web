@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 // <!-- Họ tên: Trần Minh Vũ
 // MSSV:2122110359
@@ -63,6 +65,12 @@ class CategoryController extends Controller
                     'unique:categories,slug',
                     'regex:/^[a-z0-9-]+$/'
                 ],
+                'img' => [
+                    'nullable',
+                    'image',
+                    'mimes:jpg,jpeg,png,webp',
+                    'max:200,'
+                ],
                 'status' => 'required|in:0,1'
             ],
             // Parram 2: Messages - tùy chỉnh nội dung thông báo lỗi.
@@ -72,22 +80,36 @@ class CategoryController extends Controller
                 'max' => ':attribute không vượt quá :max ký tự.',
                 'unique' => ':attribute đã tồn tại.',
                 'slug.regex' => ':attribute chỉ được chứa chữ thường, số và dấu gạch ngang (-).',
+                'img.image' => ':attribute phải là hình ảnh.',
+                'img.mimes' => ':attribute chỉ chấp nhận các định dạng: jpg, jpeg, png, webp.',
+                'img.max' => ':attribute không được vượt quá 200 KB.',
                 'status.in' => ':attribute không hợp lệ.'
             ],
             // Parram 3: Attributes- tên hiển thị của các trường
             [
                 'catename' => 'Tên loại',
                 'slug' => 'Đường dẫn (Slug)',
+                'img' => 'Hình ảnh',
                 'status' => 'Trạng thái'
             ]
         );
+        // upload hình ảnh (nếu có)
+        $fileName = null;
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $fileName = Str::slug($request->catename)
+                . '-' . time()
+                . '.' . $file->extension();
+            // hình ảnh được lưu vào thư mục storage/app/public/categories
+            $file->storeAs('categories', $fileName, 'public');
+        }
         // thêm dữ liệu ... try/catch
         try {
             Category::create([
                 'catename' => $request->catename,
                 'slug' => $request->slug,
                 'description' => $request->description,
-                'image' => $request->image,
+                'image' => $fileName,
                 'status' => $request->status,
             ]);
             return redirect()
@@ -138,6 +160,12 @@ class CategoryController extends Controller
                     'regex:/^[a-z0-9-]+$/',
                     Rule::unique('categories', 'slug')->ignore($cateid, 'cateid'),
                 ],
+                'img' => [
+                    'nullable',
+                    'image',
+                    'mimes:jpg,jpeg,png,webp',
+                    'max:200,'
+                ],
                 'status' => 'required|in:0,1'
             ],
             // Param 2: Messages - tùy chỉnh nội dung thông báo lỗi
@@ -147,13 +175,18 @@ class CategoryController extends Controller
                 'max' => ':attribute không vượt quá :max ký tự.',
                 'unique' => ':attribute đã tồn tại.',
                 'slug.regex' => ':attribute chỉ được chứa chữ thường, số và dấu gạch ngang (-).',
+                'img.image' => ':attribute phải là hình ảnh.',
+                'img.mimes' => ':attribute chỉ chấp nhận các định dạng: jpg, jpeg, png, webp.',
+                'img.max' => ':attribute không được vượt quá 200 KB.',
                 'status.in' => ':attribute không hợp lệ.'
             ],
             // Param 3: Attributes - tên hiển thị của các trường
             [
                 'catename' => 'Tên loại',
                 'slug' => 'Đường dẫn (Slug)',
-                'status' => 'Trạng thái'
+                'status' => 'Trạng thái',
+                'img' => 'Hình ảnh',
+
             ]
         );
         //Kiểm tra
@@ -164,12 +197,30 @@ class CategoryController extends Controller
                     ->route('admin.categories.index')
                     ->with('error', 'Danh mục không tồn tại');
             }
+            // Có chọn hình ảnh mới
+            // Giữ tên hình ảnh cũ
+            $fileName = $category->image;
+            if ($request->hasFile('img')) {
+                // Xóa hình ảnh cũ
+                if ($fileName) {
+                    Storage::disk('public')->delete('categories/' . $category->image);
+                }
+                // Upload hình ảnh mới
+                $file = $request->file('img');
+                $fileName = Str::slug($request->catename)
+
+                    . '-' . time()
+                    . '.' . $file->extension();
+                $file->storeAs('categories', $fileName, 'public');
+            }
             //thực hiện cập nhật
             $category->update([
                 'catename' => $request->catename,
                 'slug' => $request->slug,
                 'description' => $request->description,
                 'status' => $request->status,
+                'image' => $fileName,
+
             ]);
             return redirect()
                 ->route('admin.categories.index')

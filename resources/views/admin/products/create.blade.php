@@ -61,7 +61,7 @@
                             <option value="">-- Chọn thương hiệu --</option>
                             @foreach ($brands as $brand)
                                 <option value="{{ $brand->id }}"
-                                    {{ old('brandid')==$brand->brandid ? 'selected' :''  }}>
+                                    {{ old('brandid')==$brand->id ? 'selected' :''  }}>
 
                                     {{ $brand->brandname }}
                                 </option>
@@ -73,6 +73,28 @@
                             {{ $message }}
 
                         </span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3 img-group">
+                        <label class="form-label">Hình ảnh chính</label>
+                        <input type="file" name="img" class="form-control img-input">
+                        <div class="img-preview mt-2"></div>
+                        @error('img')
+                            <span class="text-danger">
+                                {{ $message }}
+                            </span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3 img-group">
+                        <label class="form-label">Hình ảnh phụ</label>
+                        <input type="file" name="imgs[]" class="form-control img-input" multiple>
+                        <div class="img-preview mt-2"></div>
+                        @error('imgs')
+                            <span class="text-danger">
+                                {{ $message }}
+                            </span>
                         @enderror
                     </div>
                 </div>
@@ -96,18 +118,7 @@
                         </span>
                         @enderror
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Hình ảnh</label>
-                        <input type="file" name="image" id="image" class="form-control" accept="image/*" onchange="previewImage(event)">
-                        @error('image')
-                        <span class="text-danger">
-                            {{ $message }}
-                        </span>
-                        @enderror
-                        <div class="mt-2">
-                            <img id="preview" src="#" alt="Xem trước hình ảnh" class="img-thumbnail d-none" style="max-height: 200px;">
-                        </div>
-                    </div>
+
                     <div class="mb-3">
                         <label class="form-label d-block">Trạng thái</label>
                         <input type="radio" class="btn-check" name="status" id="active" value="1" {{ old('status',1)==1 ? 'checked' : ''   }}>
@@ -127,7 +138,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Mô tả sản phẩm</label>
-                        <textarea name="description" rows="4" class="form-control" value="{{ old('description') }}"></textarea>
+                        <textarea name="description" rows="4" class="form-control">{{ old('description') }}</textarea>
                     </div>
                 </div>
             </div>

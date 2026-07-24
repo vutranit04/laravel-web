@@ -6,52 +6,78 @@
         <h1 class="mb-4 text-uppercase">
             Thêm thương hiệu
         </h1>
-      <x-admin.alert/>
+        <x-admin.alert />
         <div class="card">
             <div class="card-body">
 
-                <form action="{{ route('admin.brands.store') }}" method="POST">
+                <form action="{{ route('admin.brands.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
-                    <div class="mb-3">
-                        <label>Tên thương hiệu</label>
-                        <input type="text" name="brandname" value="{{ old('brandname') }}" class="form-control"> @error('brandname')
-                        <span class="text-danger">
-                            {{ $message }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tên thương hiệu</label>
+                                <input type="text" name="brandname" value="{{ old('brandname') }}" class="form-control">
+                                @error('brandname')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
 
-                        </span>
-                        @enderror
+                            <div class="mb-3">
+                                <label class="form-label">Slug</label>
+                                <input type="text" name="slug" value="{{ old('slug') }}" class="form-control">
+                                @error('slug')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3 img-group">
+                                <label class="form-label">Hình ảnh</label>
+                                <input type="file" name="img" class="form-control img-input">
+                                <div class="img-preview mt-2">   </div>
+                                    @error('img')
+                                        <span class="text-danger">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label d-block">Trạng thái</label>
+                                <input type="radio" class="btn-check" name="status" id="active" value="1"
+                                    {{ old('status', 1) == 1 ? 'checked' : '' }}>
+                                <label class="btn btn-outline-success" for="active">Hiển thị</label>
+
+                                <input type="radio" class="btn-check" name="status" id="inactive" value="0"
+                                    {{ old('status', 1) == 0 ? 'checked' : '' }}>
+                                <label class="btn btn-outline-danger" for="inactive">Ẩn</label>
+                                @error('status')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Mô tả</label>
+                                <textarea name="description" rows="5" class="form-control">{{ old('description') }}</textarea>
+                                @error('description')
+                                    <span class="text-danger">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label>Slug</label>
-                        <input type="text" name="slug" value="{{ old('slug') }}" class="form-control">
-                         @error('slug')
-                        <span class="text-danger">
-                            {{ $message }}
-
-                        </span>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Trạng thái</label>
-                        <input type="radio" class="btn-check" name="status" id="active" value="1"
-                            {{ old('status', 1) == 1 ? 'checked' : '' }}>
-                        <label class="btn btn-outline-success" for="active">Hiển thị</label>
-
-                        <input type="radio" class="btn-check" name="status" id="inactive" value="0"
-                            {{ old('status', 1) == 0 ? 'checked' : '' }}>
-                        <label class="btn btn-outline-danger" for="inactive">Ẩn</label>
-                        @error('status')
-                            <span class="text-danger">
-                                {{ $message }}
-                            </span>
-                        @enderror
-                    </div>
-
-                    <button type="submit" class="btn btn-success">
-                        + Lưu dữ liệu
+                    <button type="submit" class="btn btn-primary">
+                        Lưu
                     </button>
 
                     <a href="{{ route('admin.brands.index') }}" class="btn btn-secondary">

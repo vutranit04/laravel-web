@@ -20,6 +20,7 @@ mb-3">
         <thead class="table-dark">
             <tr>
                 <th>Mã thương hiệu</th>
+                <th>Hình ảnh</th>
                 <th>Tên thương hiệu</th>
                 <th>Slug</th>
                 <th>Trạng thái</th>
@@ -30,7 +31,13 @@ mb-3">
             @foreach ($list as $item)
                 <tr>
                     <td>{{ $item->id }}</td>
-                    <td>{{ $item->brandname }}</td>
+                    <td>
+                        @if($item->image)
+                            <img src="{{ asset('storage/brands/' . $item->image) }}" width="80"
+                            class="img-thumbnail">
+                        @endif
+                    </td>
+                       <td>{{ $item->brandname }}</td>
                     <td>{{ $item->slug }}</td>
                     <td>
                         @if ($item->status == 1)
@@ -39,6 +46,7 @@ mb-3">
                             <span class="badge bg-danger">Ẩn</span>
                         @endif
                     </td>
+                  
                     <td>
                         <a href="{{ route('admin.brands.edit', $item->id) }}" class="btn btn-warning btn-sm">
                             <i class="bi bi-pencil-square"></i>
@@ -54,6 +62,7 @@ mb-3">
                             </button>
                         </form>
                     </td>
+                </tr>
             @endforeach
         </tbody>
     </table>
