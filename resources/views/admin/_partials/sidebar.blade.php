@@ -72,6 +72,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link text-white" href="{{ route('admin.orders.index') }}">
+                    <i class="bi bi-cart-check"></i>
+                    Quản Lý Đơn Hàng
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link text-white" href="{{ route('admin.changepassword') }}">
                     <i class="bi bi-key"></i>
                     Đổi Mật Khẩu

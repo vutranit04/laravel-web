@@ -9,12 +9,30 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\DemoController;
+use App\Http\Controllers\Client\HomeController as ClientHomeController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\CartController as ClientCartController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// ==========================================
+// CLIENT ROUTES (Không sử dụng prefix)
+// ==========================================
+Route::get('/', [ClientHomeController::class, 'index'])->name('home');
+Route::get('/product/{slug}', [ClientProductController::class, 'show'])->name('products.show');
+Route::get('/category/{slug}', [ClientProductController::class, 'category'])->name('products.category');
+Route::get('/brand/{slug}', [ClientProductController::class, 'brand'])->name('products.brand');
+Route::get('/search', [ClientProductController::class, 'search'])->name('products.search');
+Route::get('/products', [ClientProductController::class, 'index'])->name('products.index');
+
+// Cart & Checkout Routes
+Route::get('/cart', [ClientCartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [ClientCartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update', [ClientCartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove', [ClientCartController::class, 'remove'])->name('cart.remove');
+Route::get('/checkout', [ClientCartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/checkout', [ClientCartController::class, 'postCheckout'])->name('cart.postCheckout');
 
 
 Route::get('/demo', [DemoController::class, 'index']);
@@ -83,6 +101,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('posts/{id}/restore', [PostController::class, 'restore'])->name('posts.restore');
             Route::delete('posts/{id}/forcedelete', [PostController::class, 'forceDelete'])->name('posts.forceDelete');
             Route::resource('posts', PostController::class);
+
+            // Quản lý Đơn hàng (Orders)
+            Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
         });
     });
 });
