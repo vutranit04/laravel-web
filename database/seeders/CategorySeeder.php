@@ -25,6 +25,7 @@ class CategorySeeder extends Seeder
                 'description'=> fake()->sentence(30),
                 'created_at'=> now(),
                 'updated_at'=> now(),
+                
 
 
             ]);

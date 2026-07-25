@@ -6,16 +6,14 @@
 @section('content')
 <h2 class="mb-3">DANH SÁCH LOẠI SẢN PHẨM</h2>
 {{-- file resources/views/admin/categories/index.blade.php --}}
-<a href="{{ route('admin.categories.create') }}" class="btn btn-success
-mb-3">
-+ Thêm mới
+<a href="{{ route('admin.categories.create') }}" class="btn btn-success mb-3 me-2">
+    + Thêm mới
 </a>
-@if(session('success'))
-<div class="alert alert-success">
-    {{ session('success') }}
+<a href="{{ route('admin.categories.trash') }}" class="btn btn-danger mb-3">
+    <i class="bi bi-trash"></i> Thùng rác
+</a>
 
-</div>
-@endif
+<x-admin.alert />
 
 <table class="table table-bordered table-hover table-striped">
     <thead class="table-dark">

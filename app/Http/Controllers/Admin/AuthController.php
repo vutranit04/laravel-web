@@ -83,45 +83,43 @@ class AuthController extends Controller
         return view('admin.auth.forgotpassword');
     }
 
-    // Xử lý Quên mật khẩu & Gửi mail
+    // Xử lý quên mật khẩu
     public function postForgotpassword(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-        ], [
-            'email.required' => 'Vui lòng nhập địa chỉ email.',
-            'email.email' => 'Địa chỉ email không đúng định dạng.',
-        ]);
-
-        $user = User::where('email', $request->email)->first();
-        if (!$user) {
-            return back()->with('error', 'Email này chưa được đăng ký trong hệ thống!')->withInput();
-        }
-
-        // Tạo token ngẫu nhiên
-        $token = Str::random(60);
-
-        // Lưu hoặc cập nhật token vào bảng password_reset_tokens
-        DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $request->email],
+        // validate - kiểm tra dữ liệu đầu vào
+        $request->validate(
+            ['email' => 'required|email'],
             [
-                'email' => $request->email,
-                'token' => $token,
-                'created_at' => now(),
+                'email.required' => 'Email không được để trống',
+                'email.email' => 'Email không đúng định dạng',
             ]
         );
-
-        // Gửi email khôi phục
-        try {
-            Mail::send('emails.reset_password', compact('user', 'token'), function ($message) use ($user) {
-                $message->to($user->email, $user->fullname)
-                    ->subject('Khôi phục mật khẩu tài khoản Admin');
-            });
-
-            return back()->with('success', 'Đã gửi liên kết khôi phục mật khẩu đến email của bạn. Vui lòng kiểm tra hòm thư!');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Không thể gửi email. Lỗi: ' . $e->getMessage());
+        // Kiểm tra email tồn tại
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()
+                ->with('error', 'Email không tồn tại')
+                ->withInput();
         }
+        // Tạo mật khẩu mới
+        $passrandom = Str::random(10);
+        // Mã hóa mật khẩu
+        $passencrypted = Hash::make($passrandom);
+        // Lưu vào DB
+        $user->update([
+            'password' => $passencrypted
+        ]);
+        // Nội dung email
+        $html = "<h2>Mật khẩu mới của bạn là: $passrandom</h2>
+<p>Vui lòng đổi mật khẩu sau khi đăng nhập.</p>";
+        // Gửi email
+        Mail::html($html, function ($message) use ($request) {
+            $message->to($request->email)
+                ->subject('Đặt lại mật khẩu');
+        });
+        // điều hướng về page forgot kèm thông báo
+        return back()
+            ->with('message', 'Đã Gửi mật khẩu mới. Bạn vui lòng kiểm tra email của bạn');
     }
 
     // Hiển thị trang Đặt lại mật khẩu từ link trong Email
@@ -146,27 +144,19 @@ class AuthController extends Controller
             'password.confirmed' => 'Xác nhận mật khẩu không trùng khớp.',
         ]);
 
-        // Kiểm tra token có hợp lệ không
-        $resetRecord = DB::table('password_reset_tokens')
-            ->where('email', $request->email)
-            ->where('token', $request->token)
+        // Kiểm tra user có khớp email và remember_token trong bảng users hay không
+        $user = User::where('email', $request->email)
+            ->where('remember_token', $request->token)
             ->first();
 
-        if (!$resetRecord) {
+        if (!$user) {
             return back()->with('error', 'Liên kết khôi phục không hợp lệ hoặc đã hết hạn!');
         }
 
-        $user = User::where('email', $request->email)->first();
-        if (!$user) {
-            return back()->with('error', 'Tài khoản không tồn tại!');
-        }
-
-        // Cập nhật mật khẩu mới
+        // Cập nhật mật khẩu mới và xóa token
         $user->password = Hash::make($request->password);
+        $user->remember_token = null;
         $user->save();
-
-        // Xóa token đã sử dụng
-        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
         return redirect()->route('admin.login')->with('success', 'Đặt lại mật khẩu thành công! Vui lòng đăng nhập bằng mật khẩu mới.');
     }

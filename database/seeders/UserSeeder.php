@@ -13,6 +13,22 @@ class UserSeeder extends Seeder
     {
         $faker = Faker::create('vi_VN');
 
+        // Tài khoản Admin cố định
+        DB::table('users')->insert([
+            'fullname'   => 'Quản Trị Viên',
+            'username'   => 'admin',
+            'email'      => 'vutranit04@gmail.com',
+            'password'   => Hash::make('123456'),
+            'phone'      => '0901234567',
+            'address'    => 'TP. Hồ Chí Minh',
+            'gender'     => 1,
+            'birthday'   => '2000-01-01',
+            'role'       => 1,
+            'status'     => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         for ($i = 1; $i <= 20; $i++) {
 
             DB::table('users')->insert([

@@ -28,6 +28,7 @@ class CategoryController extends Controller
         //     ->orderBy('catename')
         //     ->get();
         //==== ORM Eloquent
+        
         $list = Category::select('cateid', 'catename', 'slug', 'image', 'status')
             ->orderBy('catename')
             ->paginate($limit);
@@ -233,10 +234,73 @@ class CategoryController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage (Soft Delete).
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            Category::findOrFail($id)->delete();
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('success', 'Xóa thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Hiển thị danh sách dữ liệu đã xóa mềm Soft Delete (Thùng rác).
+     */
+    public function trash($limit = 10)
+    {
+        $list = Category::onlyTrashed()
+            ->select('cateid', 'catename', 'slug', 'image', 'status')
+            ->orderBy('catename')
+            ->paginate($limit);
+
+        return view('admin.categories.trash', compact('list'));
+    }
+
+    /**
+     * Khôi phục dữ liệu đã bị xóa mềm.
+     */
+    public function restore(string $id)
+    {
+        try {
+            Category::onlyTrashed()->findOrFail($id)->restore();
+            return redirect()
+                ->route('admin.categories.trash')
+                ->with('success', 'Khôi phục thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Xóa vĩnh viễn dữ liệu khỏi CSDL.
+     */
+    public function forceDelete(string $id)
+    {
+        try {
+            $category = Category::onlyTrashed()->findOrFail($id);
+
+            if ($category->image) {
+                Storage::disk('public')->delete('categories/' . $category->image);
+            }
+
+            $category->forceDelete();
+
+            return redirect()
+                ->route('admin.categories.trash')
+                ->with('success', 'Xóa vĩnh viễn thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
     }
 }
