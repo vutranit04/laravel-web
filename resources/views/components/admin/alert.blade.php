@@ -1,15 +1,22 @@
-   {{-- Hiển thị lỗi validation --}}
-        @if($errors ->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors ->all() as $error )
+{{-- Hiển thị lỗi validation --}}
+@if($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        @endif
-        </div>
-        @if (session('error'))
-            <div class=" alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif

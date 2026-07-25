@@ -16,7 +16,7 @@
         </h4>
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link text-white" href="{{ route('admin.home')}}">
+                <a class="nav-link text-white" href="{{ route('admin.dashboard')}}">
                     <i class="bi bi-house-door"></i>
                     Dashboard
                 </a>
@@ -71,10 +71,10 @@
                     Quản Lý Bài Viết 
                 </a>
             </li>
-            </li>  <li class="nav-item">
-                <a class="nav-link text-white" href="#">
-                    <i class="bi bi-box-seam"></i>
-                    Quản Lý Đơn Hàng
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{{ route('admin.changepassword') }}">
+                    <i class="bi bi-key"></i>
+                    Đổi Mật Khẩu
                 </a>
             </li>
         </ul>
