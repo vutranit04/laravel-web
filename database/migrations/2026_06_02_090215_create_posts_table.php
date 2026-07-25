@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('content');
             $table->string('image',200);
             $table->tinyInteger('status')->default(1);
+            $table->softDeletes();
             $table->timestamps();   
              //=============================================
             //khoa ngoai toi bang users

@@ -115,10 +115,68 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage (Soft Delete).
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            User::findOrFail($id)->delete();
+            return redirect()
+                ->route('admin.users.index')
+                ->with('success', 'Xóa thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Hiển thị danh sách dữ liệu đã xóa mềm Soft Delete (Thùng rác).
+     */
+    public function trash($limit = 10)
+    {
+        $list = User::onlyTrashed()
+            ->select('id', 'fullname', 'username', 'email', 'phone', 'role', 'status')
+            ->orderBy('username')
+            ->paginate($limit);
+
+        return view('admin.users.trash', compact('list'));
+    }
+
+    /**
+     * Khôi phục dữ liệu đã bị xóa mềm.
+     */
+    public function restore(string $id)
+    {
+        try {
+            User::onlyTrashed()->findOrFail($id)->restore();
+            return redirect()
+                ->route('admin.users.trash')
+                ->with('success', 'Khôi phục thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Xóa vĩnh viễn dữ liệu khỏi CSDL.
+     */
+    public function forceDelete(string $id)
+    {
+        try {
+            $user = User::onlyTrashed()->findOrFail($id);
+            $user->forceDelete();
+
+            return redirect()
+                ->route('admin.users.trash')
+                ->with('success', 'Xóa vĩnh viễn thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
     }
 }

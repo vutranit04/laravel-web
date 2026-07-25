@@ -4,15 +4,16 @@
 
 @section('content')
 <h2 class="mb-3">DANH SÁCH BÀI VIẾT</h2>
-<a href="{{ route('admin.posts.create') }}" class="btn btn-success
-mb-3">
-+ Thêm mới
-</a>
-  @if(session ('success'))
-        <div class=" alert alert-success">
-            {{ session ('success') }}
-        </div>
-        @endif
+<div class="mb-3">
+    <a href="{{ route('admin.posts.create') }}" class="btn btn-success me-2">
+        + Thêm mới
+    </a>
+    <a href="{{ route('admin.posts.trash') }}" class="btn btn-danger">
+        <i class="bi bi-trash"></i> Thùng rác
+    </a>
+</div>
+
+<x-admin.alert />
 <table class="table table-bordered table-hover table-striped">
     <thead class="table-dark">
         <tr>

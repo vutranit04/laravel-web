@@ -29,6 +29,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('role')->default(2);
             $table->tinyInteger('status')->default(1);
             $table->rememberToken(); // Thêm cột remember_token
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -145,10 +145,73 @@ class PostController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage (Soft Delete).
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            Post::findOrFail($id)->delete();
+            return redirect()
+                ->route('admin.posts.index')
+                ->with('success', 'Xóa thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Hiển thị danh sách dữ liệu đã xóa mềm Soft Delete (Thùng rác).
+     */
+    public function trash($limit = 10)
+    {
+        $list = Post::onlyTrashed()
+            ->with('user')
+            ->orderBy('id', 'desc')
+            ->paginate($limit);
+
+        return view('admin.posts.trash', compact('list'));
+    }
+
+    /**
+     * Khôi phục dữ liệu đã bị xóa mềm.
+     */
+    public function restore(string $id)
+    {
+        try {
+            Post::onlyTrashed()->findOrFail($id)->restore();
+            return redirect()
+                ->route('admin.posts.trash')
+                ->with('success', 'Khôi phục thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Xóa vĩnh viễn dữ liệu khỏi CSDL.
+     */
+    public function forceDelete(string $id)
+    {
+        try {
+            $post = Post::onlyTrashed()->findOrFail($id);
+
+            if ($post->image && file_exists(public_path($post->image))) {
+                unlink(public_path($post->image));
+            }
+
+            $post->forceDelete();
+
+            return redirect()
+                ->route('admin.posts.trash')
+                ->with('success', 'Xóa vĩnh viễn thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
     }
 }

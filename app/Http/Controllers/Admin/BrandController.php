@@ -136,10 +136,73 @@ class BrandController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage (Soft Delete).
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            Brand::findOrFail($id)->delete();
+            return redirect()
+                ->route('admin.brands.index')
+                ->with('success', 'Xóa thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Hiển thị danh sách dữ liệu đã xóa mềm Soft Delete (Thùng rác).
+     */
+    public function trash($limit = 10)
+    {
+        $list = Brand::onlyTrashed()
+            ->select('id', 'brandname', 'slug', 'image', 'status')
+            ->orderBy('brandname')
+            ->paginate($limit);
+
+        return view('admin.brands.trash', compact('list'));
+    }
+
+    /**
+     * Khôi phục dữ liệu đã bị xóa mềm.
+     */
+    public function restore(string $id)
+    {
+        try {
+            Brand::onlyTrashed()->findOrFail($id)->restore();
+            return redirect()
+                ->route('admin.brands.trash')
+                ->with('success', 'Khôi phục thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Xóa vĩnh viễn dữ liệu khỏi CSDL.
+     */
+    public function forceDelete(string $id)
+    {
+        try {
+            $brand = Brand::onlyTrashed()->findOrFail($id);
+
+            if ($brand->image) {
+                Storage::disk('public')->delete('brands/' . $brand->image);
+            }
+
+            $brand->forceDelete();
+
+            return redirect()
+                ->route('admin.brands.trash')
+                ->with('success', 'Xóa vĩnh viễn thành công.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Thực hiện thất bại: ' . $e->getMessage());
+        }
     }
 }
